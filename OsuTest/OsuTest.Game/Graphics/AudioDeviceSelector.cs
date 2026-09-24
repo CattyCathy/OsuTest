@@ -64,7 +64,7 @@ namespace OsuTest.Game.Graphics
                     Spacing = new Vector2(0, 4),
                     Children = new Drawable[]
                     {
-                        new SpriteText { Text = "音频输出设备", Font = FontUsage.Default.With(size: 20) },
+                        new SpriteText { Text = "Audio output device", Font = FontUsage.Default.With(size: 20) },
                         activeText = new SpriteText { Font = FontUsage.Default.With(size: 16), Colour = Color4.Gray },
                         devices = new FillFlowContainer
                         {
@@ -105,7 +105,7 @@ namespace OsuTest.Game.Graphics
             {
                 devices.Add(new SpriteText
                 {
-                    Text = "未检测到任何音频设备（BASS 可能未能初始化）",
+                    Text = "No audio device detected (BASS may not have initialised)",
                     Font = FontUsage.Default.With(size: 16),
                     Colour = Color4.OrangeRed,
                 });
@@ -128,7 +128,7 @@ namespace OsuTest.Game.Graphics
                     }
                     catch (Exception e)
                     {
-                        activeText.Text = $"切换设备失败：{e.GetType().Name}: {e.Message}";
+                        activeText.Text = $"Switching device failed: {e.GetType().Name}: {e.Message}";
                     }
                 }));
             }
@@ -139,7 +139,7 @@ namespace OsuTest.Game.Graphics
         private void updateActiveText()
         {
             string current = string.IsNullOrEmpty(selectedDevice.Value) ? "Default" : selectedDevice.Value!;
-            activeText.Text = $"当前：{current}";
+            activeText.Text = $"Current: {current}";
         }
 
         /// <summary>

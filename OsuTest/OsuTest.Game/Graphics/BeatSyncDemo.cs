@@ -185,7 +185,7 @@ namespace OsuTest.Game.Graphics
                         sourceInfo = new SpriteText { Text = string.Empty, Font = FontUsage.Default.With(size: 18) },
                         tempoInfo = new SpriteText { Text = string.Empty, Font = FontUsage.Default.With(size: 18) },
                         timeInfo = new SpriteText { Text = string.Empty, Font = FontUsage.Default.With(size: 18) },
-                        offsetInfo = new SpriteText { Text = "时间偏移 0ms", Font = FontUsage.Default.With(size: 18) },
+                        offsetInfo = new SpriteText { Text = "Time offset 0ms", Font = FontUsage.Default.With(size: 18) },
                         status = new SpriteText { Text = string.Empty, Font = FontUsage.Default.With(size: 18) },
                     },
                 },
@@ -258,20 +258,20 @@ namespace OsuTest.Game.Graphics
                     reloadCurrentSource();
             });
 
-            addPickerButton("使用内置示例曲 (120 -> 160 BPM)", loadGeneratedDemo);
-            addPickerButton("选择音频文件…", presentFileSelector);
-            addPickerButton("停止播放", stopPlayback);
-            addPickerButton("继续播放", startPlayback);
-            addPickerButton("播放速度 1.5x", () => setRate(1.5));
-            addPickerButton("播放速度 0.75x", () => setRate(0.75));
-            addPickerButton("重新加载当前音源", reloadCurrentSource);
-            addPickerButton("重新扫描音频设备", () => deviceSelector.Rebuild());
-            addPickerButton("音频自检", runAudioSelfCheck);
-            addPickerButton("显示 tempo 时间线", showTempoTimeline);
-            addPickerButton("导出 tempo 诊断文件", exportTempoDiagnostics);
-            addPickerButton("偏移 -10ms", () => adjustOffset(-10));
-            addPickerButton("偏移 +10ms", () => adjustOffset(10));
-            addPickerButton("偏移归零", () => adjustOffset(-beatOffset, absolute: true));
+            addPickerButton("Load built-in demo (120 -> 160 BPM)", loadGeneratedDemo);
+            addPickerButton("Choose audio file...", presentFileSelector);
+            addPickerButton("Stop playback", stopPlayback);
+            addPickerButton("Resume playback", startPlayback);
+            addPickerButton("Playback rate 1.5x", () => setRate(1.5));
+            addPickerButton("Playback rate 0.75x", () => setRate(0.75));
+            addPickerButton("Reload current source", reloadCurrentSource);
+            addPickerButton("Rescan audio devices", () => deviceSelector.Rebuild());
+            addPickerButton("Audio self-check", runAudioSelfCheck);
+            addPickerButton("Show tempo timeline", showTempoTimeline);
+            addPickerButton("Export tempo diagnostics", exportTempoDiagnostics);
+            addPickerButton("Offset -10ms", () => adjustOffset(-10));
+            addPickerButton("Offset +10ms", () => adjustOffset(10));
+            addPickerButton("Reset offset", () => adjustOffset(-beatOffset, absolute: true));
 
             loadGeneratedDemo();
         }
@@ -289,15 +289,15 @@ namespace OsuTest.Game.Graphics
         {
             if (beatGrid == null)
             {
-                selfCheckReport = "还没有加载音源";
+                selfCheckReport = "No source loaded yet";
                 status.Text = selfCheckReport;
                 Scheduler.AddDelayed(() => selfCheckReport = null, 8000);
                 return;
             }
 
             var report = new System.Text.StringBuilder();
-            report.Append($"共 {beatGrid.Beats.Count} 拍，时长 {beatGrid.Duration / 1000:0.#}s "
-                          + $"metrical 层级 {beatGrid.MetricalShift:+#;-#;0}");
+            report.Append($"{beatGrid.Beats.Count} beats over {beatGrid.Duration / 1000:0.#}s "
+                          + $"metrical level {beatGrid.MetricalShift:+#;-#;0}");
 
             // Runs of consecutive beats at the same tempo, which is what the per-keyframe list used to show. There is no
             // confidence column any more: the beats are the model's answer rather than an estimate of an onset envelope,
@@ -316,7 +316,7 @@ namespace OsuTest.Game.Graphics
 
                 report.Append($"\n{beatGrid.Beats[from] / 1000:0.00}s - {until / 1000:0.00}s"
                               + $"  {beatGrid.BpmAt(beatGrid.Beats[from]):0.#} BPM  ({i - from} ??"
-                              + (until - beatGrid.Beats[from] < 2000 ? "  <- 很近" : string.Empty));
+                              + (until - beatGrid.Beats[from] < 2000 ? "  <- very close" : string.Empty));
 
                 from = i;
             }
@@ -340,14 +340,14 @@ namespace OsuTest.Game.Graphics
         {
             if (beatGrid == null)
             {
-                status.Text = "还没有加载音源";
+                status.Text = "No source loaded yet";
                 return;
             }
 
-            string name = currentSourceName ?? (currentSourcePath != null ? Path.GetFileName(currentSourcePath) : "<未知>");
+            string name = currentSourceName ?? (currentSourcePath != null ? Path.GetFileName(currentSourcePath) : "<unknown>");
             string target = Path.Combine(Path.GetTempPath(), $"osutest-beats-{DateTime.Now:yyyyMMdd-HHmmss}.csv");
 
-            status.Text = "正在导出诊断文件…";
+            status.Text = "Exporting diagnostics...";
 
             BeatGrid grid = beatGrid;
 
@@ -375,14 +375,14 @@ namespace OsuTest.Game.Graphics
 
                     Schedule(() =>
                     {
-                        selfCheckReport = $"导出失败：{grid.Beats.Count} 拍\n{target}";
+                        selfCheckReport = $"Export failed: {grid.Beats.Count} beats\n{target}";
                         status.Text = selfCheckReport;
                         Scheduler.AddDelayed(() => selfCheckReport = null, 30_000);
                     });
                 }
                 catch (Exception e)
                 {
-                    Schedule(() => status.Text = $"诊断失败：{e.GetType().Name}: {e.Message}");
+                    Schedule(() => status.Text = $"Diagnostics failed: {e.GetType().Name}: {e.Message}");
                 }
             });
         }
@@ -469,7 +469,7 @@ namespace OsuTest.Game.Graphics
         {
             if (beatGrid == null)
             {
-                status.Text = "还没有加载音源";
+                status.Text = "No source loaded yet";
                 return;
             }
 
@@ -479,9 +479,9 @@ namespace OsuTest.Game.Graphics
             beatSync.Grid = beatGrid;
             timeMap = buildTimeMap(beatGrid);
 
-            offsetInfo.Text = $"时间偏移：{beatOffset:+0;-0;0}ms";
-            status.Text = $"对应的时间偏移 {beatOffset:+0;-0;0}ms"
-                          + (beatOffset == 0 ? "，无偏移" : "，已应用");
+            offsetInfo.Text = $"Time offset: {beatOffset:+0;-0;0}ms";
+            status.Text = $"time offset {beatOffset:+0;-0;0}ms"
+                          + (beatOffset == 0 ? ", none applied" : ", applied");
         }
 
         /// <summary>
@@ -497,19 +497,19 @@ namespace OsuTest.Game.Graphics
             var report = new System.Text.StringBuilder();
 
             var names = audio.AudioDeviceNames.ToArray();
-            report.Append($"设备列表({names.Length}): {(names.Length == 0 ? "<空>" : string.Join(" | ", names))}");
+            report.Append($"Devices ({names.Length}): {(names.Length == 0 ? "<empty>" : string.Join(" | ", names))}");
 
             string current = string.IsNullOrEmpty(audio.AudioDevice.Value) ? "Default(??" : audio.AudioDevice.Value!;
-            report.Append($"\n当前设备：{current}");
+            report.Append($"\nCurrent device: {current}");
 
             try
             {
                 var silent = audio.Tracks.GetVirtual(5000);
-                report.Append($"\n静音音轨：{(silent == null ? "null" : $"ok, length={silent.Length:0}ms")}");
+                report.Append($"\nSilent track: {(silent == null ? "null" : $"ok, length={silent.Length:0}ms")}");
             }
             catch (Exception e)
             {
-                report.Append($"\n框架音轨失败：{e.GetType().Name}: {e.Message}");
+                report.Append($"\nFramework track failed: {e.GetType().Name}: {e.Message}");
             }
 
             if (currentSourcePath != null)
@@ -521,15 +521,15 @@ namespace OsuTest.Game.Graphics
                     // Null here is the expected outcome for a user-picked file rather than a fault: the track store
                     // resolves names through the stores attached to it, not through the file system, and the store
                     // that could be given a directory is internal to the framework. The BASS path below covers it.
-                    report.Append($"\n框架音轨存储: {(probe == null ? "null（对用户选择的文件是预期结果，由 BASS 直连接手）" : $"ok, {probe.GetType().Name}, length={probe.Length:0}ms")}");
+                    report.Append($"\nFramework track store: {(probe == null ? "null (expected for a file the user chose: the direct BASS path handles it)" : $"ok, {probe.GetType().Name}, length={probe.Length:0}ms")}");
                 }
                 catch (Exception e)
                 {
-                    report.Append($"\n框架音轨失败：{e.GetType().Name}: {e.Message}");
+                    report.Append($"\nFramework track failed: {e.GetType().Name}: {e.Message}");
                 }
             }
 
-            report.Append($"\nBASS 直连播放: {(bassSource == null ? "未使用" : $"使用中，位置 {bassSource.CurrentTime:0}ms / {bassSource.Length:0}ms，运行中={bassSource.IsRunning}")}");
+            report.Append($"\nDirect BASS playback: {(bassSource == null ? "not used" : $"in use, position {bassSource.CurrentTime:0}ms / {bassSource.Length:0}ms, running={bassSource.IsRunning}")}");
 
             if (beatGrid != null)
             {
@@ -553,12 +553,12 @@ namespace OsuTest.Game.Graphics
                     double median = intervals[intervals.Count / 2];
                     double spread = intervals[intervals.Count - 1] - intervals[0];
 
-                    report.Append($"\n平均: {beatGrid.Beats.Count} 个拍点，中位 {median:0.#}ms（{60000 / median:0.#} BPM），"
-                                  + $"离散度 {spread:0.#}ms，metrical 层级 {beatGrid.MetricalShift:+#;-#;0}");
+                    report.Append($"\n平均: {beatGrid.Beats.Count} beats, median {median:0.#}ms ({60000 / median:0.#} BPM), "
+                                  + $"spread {spread:0.#}ms, metrical level {beatGrid.MetricalShift:+#;-#;0}");
                 }
             }
 
-            report.Append($"\n上次播放失败原因: {playbackError ?? "<无>"}");
+            report.Append($"\nLast playback failure: {playbackError ?? "<none>"}");
 
             status.Text = report.ToString();
             deviceSelector.Rebuild();
@@ -577,17 +577,17 @@ namespace OsuTest.Game.Graphics
         {
             if (currentSourcePath == null)
             {
-                status.Text = "还没有加载音源";
+                status.Text = "No source loaded yet";
                 return;
             }
 
             if (!File.Exists(currentSourcePath))
             {
-                status.Text = $"音源文件不存在：{currentSourcePath}";
+                status.Text = $"Source file does not exist: {currentSourcePath}";
                 return;
             }
 
-            status.Text = "正在重新加载当前音源…";
+            status.Text = "Reloading the current source...";
             loadSource(currentSourcePath, currentSourceName ?? Path.GetFileName(currentSourcePath));
         }
 
@@ -602,7 +602,7 @@ namespace OsuTest.Game.Graphics
             if (!File.Exists(path))
                 DemoTrackGenerator.WriteTo(path);
 
-            loadSource(path, $"使用内置示例曲（{map.Segments[0].Bpm:0.#} -> {map.Segments[^1].Bpm:0.#} BPM）");
+            loadSource(path, $"Built-in demo ({map.Segments[0].Bpm:0.#} -> {map.Segments[^1].Bpm:0.#} BPM)");
         }
 
         /// <summary>
@@ -619,7 +619,7 @@ namespace OsuTest.Game.Graphics
                 {
                     // Not all platforms implement this, and the framework build this project targets ships no
                     // native file dialog library at all, so this is an expected path rather than an error.
-                    presentInGamePicker("系统文件选择器不可用，已改用游戏内选择器");
+                    presentInGamePicker("The system file picker is unavailable; using the in-game one");
                     return;
                 }
 
@@ -628,7 +628,7 @@ namespace OsuTest.Game.Graphics
             }
             catch (Exception e)
             {
-                presentInGamePicker($"系统文件选择器不可用：{e.GetType().Name}，已改用游戏内选择器");
+                presentInGamePicker($"System file picker unavailable: {e.GetType().Name}; using the in-game picker");
             }
         }
 
@@ -671,8 +671,8 @@ namespace OsuTest.Game.Graphics
             loadCancellation = new CancellationTokenSource();
             var cancellation = loadCancellation.Token;
 
-            sourceInfo.Text = $"音源：{displayName}";
-            status.Text = "正在解码并分析…";
+            sourceInfo.Text = $"Source: {displayName}";
+            status.Text = "Decoding and analysing...";
 
             // Drop the current source and take the visuals off the music clock while the new one is prepared.
             // Without this the old track keeps playing underneath the visuals, and its clock keeps driving them.
@@ -697,7 +697,7 @@ namespace OsuTest.Game.Graphics
                 // Playback failing is not fatal. Decoding and analysis need no output device, so the tempo map
                 // is still derived from the real audio; only the sound is missing, and the analysis result's
                 // duration is enough to drive a silent stand-in track on the wall clock.
-                playbackError = loaded == null ? playbackFailure ?? "音频系统不可用" : null;
+                playbackError = loaded == null ? playbackFailure ?? "audio system unavailable" : null;
 
                 if (loaded != null)
                 {
@@ -736,7 +736,7 @@ namespace OsuTest.Game.Graphics
                     {
                         // The BASS error code is the only thing that says why a file failed, so it is passed
                         // through to the UI rather than replaced with a generic message.
-                        error = $"解码失败（{e.Error}）：文件格式或编解码器不受支持，或音频系统未能启动";
+                        error = $"Decode failed ({e.Error}): unsupported format or codec, or the audio system did not start";
                     }
                     catch (Exception e)
                     {
@@ -758,13 +758,13 @@ namespace OsuTest.Game.Graphics
         {
             if (grid == null)
             {
-                status.Text = $"加载失败：{error ?? "未知错误"}";
+                status.Text = $"Load failed: {error ?? "unknown error"}";
                 return;
             }
 
             if (grid.IsEmpty)
             {
-                status.Text = "没有可用的音频设备，已改用静音音轨";
+                status.Text = "No audio device available; using a silent track";
                 return;
             }
 
@@ -779,7 +779,7 @@ namespace OsuTest.Game.Graphics
 
             // A new source starts from no offset: the previous one's correction belonged to the previous file.
             beatOffset = 0;
-            offsetInfo.Text = "时间偏移 0ms";
+            offsetInfo.Text = "Time offset 0ms";
 
             double slowest = double.MaxValue;
             double fastest = 0;
@@ -795,8 +795,8 @@ namespace OsuTest.Game.Graphics
                 fastest = Math.Max(fastest, 60000 / length);
             }
 
-            tempoInfo.Text = $"模型分析出 {grid.Beats.Count} 个拍点，{slowest:0.#}-{fastest:0.#} BPM"
-                             + $"，metrical 层级 {grid.MetricalShift:+#;-#;0}";
+            tempoInfo.Text = $"The model found {grid.Beats.Count} beats, {slowest:0.#}-{fastest:0.#} BPM"
+                             + $", metrical level {grid.MetricalShift:+#;-#;0}";
 
             // Playback, in order of preference: the framework's own track, then a BASS channel opened directly,
             // then silent. The middle case exists because the framework's track store cannot open files outside
@@ -812,7 +812,7 @@ namespace OsuTest.Game.Graphics
 
                     if (silent == null)
                     {
-                        status.Text = $"无法播放（{grid.Beats.Count} 个拍点），BASS 也无法解码该文件：{bassFailure}";
+                        status.Text = $"Cannot play ({grid.Beats.Count} beats), and BASS could not decode the file either: {bassFailure}";
                         return;
                     }
 
@@ -823,7 +823,7 @@ namespace OsuTest.Game.Graphics
 
                     // Only the fallback's own reason is reported. The framework's store failing to find a
                     // user-picked file is expected and would only be noise here.
-                    playbackError = $"BASS 无法解码该文件：{bassFailure}";
+                    playbackError = $"BASS could not decode the file: {bassFailure}";
                 }
             }
 
@@ -845,9 +845,9 @@ namespace OsuTest.Game.Graphics
             }
 
             status.Text = playbackError == null
-                ? $"已就绪：{grid.Beats.Count} 拍 / {grid.Duration / 1000:0.#}s"
-                  + (usingBass ? "，由 BASS 直连播放" : string.Empty)
-                : $"预览模式：{playbackError}";
+                ? $"Ready: {grid.Beats.Count} beats / {grid.Duration / 1000:0.#}s"
+                  + (usingBass ? ", played directly through BASS" : string.Empty)
+                : $"Preview mode: {playbackError}";
         }
 
         /// <summary>
@@ -962,7 +962,7 @@ namespace OsuTest.Game.Graphics
         {
             if (!hasPlayer)
             {
-                status.Text = "还没有加载音源";
+                status.Text = "No source loaded yet";
                 return;
             }
 
@@ -973,7 +973,7 @@ namespace OsuTest.Game.Graphics
             else
                 track!.Frequency.Value = rate;
 
-            status.Text = $"播放速度 {rate:0.##}x（仅影响播放，不影响时间轴）";
+            status.Text = $"Playback rate {rate:0.##}x (playback only, the timeline is unaffected)";
         }
 
         protected override void Dispose(bool isDisposing)
@@ -1177,7 +1177,7 @@ namespace OsuTest.Game.Graphics
                 return;
 
             if (beatSync.AnalysedBeatLength is double beatLength)
-                status.Text = $"拍号 {beatSync.CurrentBeatIndex}   距下一拍 {beatSync.TimeUntilNextBeat:0}ms   驱动动画的拍长 {beatLength:0.#}ms";
+                status.Text = $"beat {beatSync.CurrentBeatIndex}   next beat in {beatSync.TimeUntilNextBeat:0}ms   animation beat length {beatLength:0.#}ms";
         }
 
         /// <summary>

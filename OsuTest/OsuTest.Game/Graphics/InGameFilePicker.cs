@@ -80,7 +80,7 @@ namespace OsuTest.Game.Graphics
                     Spacing = new Vector2(0, 4),
                     Children = new Drawable[]
                     {
-                        new SpriteText { Text = "选择一个音频文件", Font = FontUsage.Default.With(size: 24) },
+                        new SpriteText { Text = "Choose an audio file", Font = FontUsage.Default.With(size: 24) },
                         pathText = new SpriteText { Font = FontUsage.Default.With(size: 18) },
                         statusText = new SpriteText { Font = FontUsage.Default.With(size: 16), Colour = Color4.Gray },
                     },
@@ -101,7 +101,7 @@ namespace OsuTest.Game.Graphics
                         },
                     },
                 },
-                new TextButton("取消", HidePicker)
+                new TextButton("Cancel", HidePicker)
                 {
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
@@ -142,21 +142,21 @@ namespace OsuTest.Game.Graphics
             DirectoryInfo? parent = currentDirectory.Parent;
 
             if (parent != null)
-                entries.Add(new TextButton(".. (上一级)", () => navigate(parent)));
+                entries.Add(new TextButton(".. (parent)", () => navigate(parent)));
 
             var listing = AudioFileBrowser.List(currentDirectory.FullName, allowedExtensions, max_entries);
 
             if (listing.Error != null)
             {
-                statusText.Text = $"无法读取该目录：{listing.Error}";
+                statusText.Text = $"Cannot read that directory: {listing.Error}";
                 return;
             }
 
-            statusText.Text = $"{listing.Directories.Count} 个文件夹，{listing.Files.Count} 个音频文件"
-                              + (listing.Truncated ? $"（已按上限 {max_entries} 截断）" : string.Empty);
+            statusText.Text = $"{listing.Directories.Count} folders, {listing.Files.Count} audio files"
+                              + (listing.Truncated ? $" (truncated at {max_entries})" : string.Empty);
 
             foreach (DirectoryInfo directory in listing.Directories)
-                entries.Add(new TextButton($"[目录] {directory.Name}", () => navigate(directory)));
+                entries.Add(new TextButton($"[dir] {directory.Name}", () => navigate(directory)));
 
             foreach (FileInfo file in listing.Files)
                 entries.Add(new TextButton(file.Name, () => choose(file)) { Indent = 1 });

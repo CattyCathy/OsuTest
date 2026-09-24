@@ -95,7 +95,7 @@ namespace OsuTest.Game.Graphics
 
             if (reassert > 0 && --reassert == 0)
             {
-                note("重试", 0, Progress);
+                note("retry", 0, Progress);
                 SeekRequested?.Invoke(Progress);
             }
 
@@ -117,16 +117,16 @@ namespace OsuTest.Game.Graphics
         /// only reliable way to find out which events the strip actually receives, and in what order, is to have it say
         /// so on screen.
         /// </remarks>
-        public string Trace { get; private set; } = "无";
+        public string Trace { get; private set; } = "none";
 
         private void note(string what, float x, double fraction)
         {
-            Trace = $"{what} x={x:0} 比例={fraction:0.000}";
+            Trace = $"{what} x={x:0} fraction={fraction:0.000}";
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            note("按下", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
+            note("down", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
             seekTo(e.MousePosition.X);
             return true;
         }
@@ -136,14 +136,14 @@ namespace OsuTest.Game.Graphics
         protected override void OnDrag(DragEvent e)
         {
             base.OnDrag(e);
-            note("拖动", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
+            note("drag", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
             seekTo(e.MousePosition.X);
         }
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
             base.OnMouseUp(e);
-            note("松开", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
+            note("up", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
 
             // The seek is asked for again a few frames later. Whatever the audio source does with the last request
             // during a release, it evidently does not keep it: the trace shows the position and the fraction agreeing
@@ -162,7 +162,7 @@ namespace OsuTest.Game.Graphics
         /// </remarks>
         protected override bool OnClick(ClickEvent e)
         {
-            note("点击", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
+            note("click", e.MousePosition.X, Math.Clamp(e.MousePosition.X / Math.Max(1, DrawWidth), 0, 1));
             reassert = reassert_delay;
             return true;
         }

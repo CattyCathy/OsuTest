@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="Project">
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\OsuTest.Game\OsuTest.Game.csproj" />
+    <!--
+      Referenced directly as well as through the game, because the tests exercise the analysis on its own: they call the
+      frontend, the postprocessing and the grid without going through the player at all. Relying on the reference
+      arriving transitively would work, but it would hide which project these tests are really about.
+    -->
+  </ItemGroup>
+  <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.30.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The beatmap's own timing points, the reference the tempo agreement test measures against. -->
+    <!-- torchaudio's log-mel output for a fixed signal, the reference the frontend test measures against. -->
+  </ItemGroup>
+
+  <ItemGroup Label="Package References">
+    <!--
+      The beat analysis and its optional BASS decoder, from their own repository. Project references were how this
+      repository consumed them until the library was split out; the packages are what a consumer sees, so they are what
+      this repository now uses too.
+    -->
+    <PackageReference Include="ParaTactus.NET" Version="1.0.0" />
+    <PackageReference Include="ParaTactus.Bass" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>

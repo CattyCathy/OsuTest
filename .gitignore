@@ -1,0 +1,22 @@
+# Build output
+bin/
+obj/
+
+# Runtime caches the framework writes next to the project when it runs headless. Font atlases and the like, rebuilt
+# on demand and different every run.
+headless/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+
+# The reference tooling's virtualenv and its downloaded dumps. Both are large and both can be rebuilt from
+# tools/ref/README.md, which documents how.
+tools/ref/venv/
+tools/ref/dump/
+tools/ref/parity-out.txt
+
+# Beat grid cache, if it is ever pointed inside the tree
+*.beats

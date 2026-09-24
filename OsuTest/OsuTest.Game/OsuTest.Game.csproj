@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OsuTest.Resources\OsuTest.Resources.csproj" />
+    <!--
+      Beat tracking, the tempo grid and the caches come from their own repository as packages, below. They used to be
+      project references; that the analysis cannot see osu.Framework at all is now enforced by a test over there rather
+      than by a reference here.
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ppy.osu.Framework" Version="2026.921.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The beat frontend and inference are timed stage by stage from the test project. -->
+    <InternalsVisibleTo Include="OsuTest.Game.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      Beat tracking runs the Beat This! model through ONNX Runtime. The package ships native runtimes for win-x64,
+      win-arm64, linux-x64, linux-arm64, osx-arm64, android and ios, and both the model and the runtime are MIT, so
+      this does not narrow where the player can be built for.
+    -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.30.0" />
+  </ItemGroup>
+  <ItemGroup Label="Package References">
+    <!--
+      The beat analysis and its optional BASS decoder, from their own repository. Project references were how this
+      repository consumed them until the library was split out; the packages are what a consumer sees, so they are what
+      this repository now uses too.
+    -->
+    <PackageReference Include="ParaTactus.NET" Version="1.0.0" />
+    <PackageReference Include="ParaTactus.Bass" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>

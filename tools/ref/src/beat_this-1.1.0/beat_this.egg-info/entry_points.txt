@@ -1,0 +1,2 @@
+[console_scripts]
+beat_this = beat_this.cli:main

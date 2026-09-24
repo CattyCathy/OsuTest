@@ -1,0 +1,11 @@
+{
+  "solution": {
+    "path": "OsuTest.sln",
+    "projects": [
+      "OsuTest.Desktop\\OsuTest.Desktop.csproj",
+      "OsuTest.Game\\OsuTest.Game.csproj",
+      "OsuTest.Game.Tests\\OsuTest.Game.Tests.csproj",
+      "OsuTest.Resources\\OsuTest.Resources.csproj"
+    ]
+  }
+}

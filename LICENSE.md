@@ -1,8 +1,9 @@
 # Licensing
 
-> **Reference only.** This repository is published so that the work can be read, checked and cited. It is not a
-> starting point for another project: please do not clone it to build on, and do not redistribute it or a build of it.
-> What actually binds you is the licensing below — read it before you use anything here.
+> **A sample, not a product.** This repository is a worked example: it exists so the analysis can be seen
+> working against a player, and read alongside the measurements. It is not maintained as software to deploy.
+> The licensing below is what binds you, and it permits more than this note asks: read it before you use or
+> redistribute anything here.
 
 This repository is licensed **in parts**, and the parts carry different terms. Read this before you use or redistribute
 anything here.

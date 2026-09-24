@@ -439,11 +439,12 @@ namespace OsuTest.Game.Graphics
 
             string quantised = Path.Combine(downloads, "beat-this-final0-int8.onnx");
 
-            // Measured on Designant, the quantised model is not the same beats as the float one: 550 regularised beats
-            // against 556, and about a tenth of them land more than 20ms apart. It is not worse where it counts,
-            // though - the median residual to the beatmap's own grid is 29ms for both, p90 131ms against 141ms, and
-            // 35.3% of beats more than 60ms out against 36.0%. A third of the size for that is the trade, so it stays
-            // preferred. The numbers are in docs/model.md in the library repository.
+            // Measured on Designant, the quantised model is not the same beats as the float one: 557 regularised beats
+            // against 551, and about a tenth of them land more than 20ms apart. Neither is clearly better - the median
+            // residual to the beatmap's own grid is 29ms for both, p90 141ms against 137.7ms, and 36.3% of beats more
+            // than 60ms out against 34.8% - and that ordering moved when the library's resampler and peak merge were
+            // fixed, so it is a property of the pipeline rather than of the model. A third of the size is the reason
+            // it stays preferred. The numbers are in docs/model.md in the library repository.
             if (File.Exists(quantised))
                 return quantised;
 

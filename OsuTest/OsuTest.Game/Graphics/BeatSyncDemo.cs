@@ -553,7 +553,7 @@ namespace OsuTest.Game.Graphics
                     double median = intervals[intervals.Count / 2];
                     double spread = intervals[intervals.Count - 1] - intervals[0];
 
-                    report.Append($"\n平均: {beatGrid.Beats.Count} beats, median {median:0.#}ms ({60000 / median:0.#} BPM), "
+                    report.Append($"\nAverage: {beatGrid.Beats.Count} beats, median {median:0.#}ms ({60000 / median:0.#} BPM), "
                                   + $"spread {spread:0.#}ms, metrical level {beatGrid.MetricalShift:+#;-#;0}");
                 }
             }

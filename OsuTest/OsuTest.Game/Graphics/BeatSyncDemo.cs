@@ -426,8 +426,13 @@ namespace OsuTest.Game.Graphics
         {
             string? configured = Environment.GetEnvironmentVariable("OSUTEST_MODEL");
 
-            if (!string.IsNullOrEmpty(configured) && File.Exists(configured))
-                return configured;
+            if (!string.IsNullOrEmpty(configured))
+            {
+                if (File.Exists(configured))
+                    return configured;
+
+                throw new FileNotFoundException($"OSUTEST_MODEL points at {configured}, and there is no file there.");
+            }
 
             string downloads = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
@@ -439,7 +444,19 @@ namespace OsuTest.Game.Graphics
             // though - the median residual to the beatmap's own grid is 29ms for both, p90 131ms against 141ms, and
             // 35.3% of beats more than 60ms out against 36.0%. A third of the size for that is the trade, so it stays
             // preferred. The numbers are in docs/model.md in the library repository.
-            return File.Exists(quantised) ? quantised : Path.Combine(downloads, "beat-this-final0.onnx");
+            if (File.Exists(quantised))
+                return quantised;
+
+            string floatBuild = Path.Combine(downloads, "beat-this-final0.onnx");
+
+            if (File.Exists(floatBuild))
+                return floatBuild;
+
+            // Named here rather than left to ONNX Runtime, which reports a missing model as a failed session open and
+            // says nothing about where the file was expected or how to get one.
+            throw new FileNotFoundException(
+                $"No ONNX model found. Looked for {quantised} and {floatBuild}. Download either from "
+                + "https://github.com/CattyCathy/beat-this-onnx/releases, or set OSUTEST_MODEL to its path.");
         }
 
         private static string defaultCacheDirectory()

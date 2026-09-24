@@ -17,11 +17,33 @@ The library is consumed as packages rather than as a project, because it lives i
 published, the two packages are committed in `packages-local/` and `nuget.config` points at that folder, so a clean
 clone restores and builds without publishing anything first.
 
-**A model is the one thing you have to fetch.** Download `beat-this-final0-int8.onnx` (20.9 MB) from the releases of
-[`beat-this-onnx`](https://github.com/CattyCathy/beat-this-onnx) into your Downloads folder — that is where the app
-looks — or set `OSUTEST_MODEL` to wherever you put it. The float build works as well and runs the same path; the
-quantised one is what this application has actually been run against, and the difference between them is measured in
-that repository's README.
+## The model
+
+A model is the one thing you have to fetch. Download `beat-this-final0-int8.onnx` (20.9 MB) from the releases of
+[`beat-this-onnx`](https://github.com/CattyCathy/beat-this-onnx) and put it in your Downloads folder, or set
+`OSUTEST_MODEL` to its full path. The float build works the same way; the quantised one is what this application has
+actually been run against, and the difference between the two is measured in that repository's README.
+
+The app resolves the path in this order, and if it finds nothing it says what it looked for:
+
+1. `OSUTEST_MODEL`, when it is set — and it is an error, not a fallback, if that file does not exist;
+2. `%USERPROFILE%\Downloads\beat-this-final0-int8.onnx` (`$HOME` elsewhere);
+3. the same folder's `beat-this-final0.onnx`.
+
+To the library the model is a **path**, never a bundled resource — which is why it is not in this repository:
+
+```csharp
+var provider = new BeatGridProvider(modelPath, cacheDirectory, BassAudioDecoder.Default);
+
+BeatGrid grid = provider.Get(audioPath);        // analysed once, then cached on disk
+double bpm = grid.BpmAt(timeInMilliseconds);    // the tempo at a time, following real tempo changes
+IReadOnlyList<double> beats = grid.Beats;       // the beat instants, in milliseconds
+```
+
+Any ONNX graph with the input and output names documented in
+[`ParaTactus/docs/model.md`](https://github.com/CattyCathy/ParaTactus/blob/main/docs/model.md) will run; the file is
+opaque to the library. The tests read `OSUTEST_MODEL` as well, but default to the float build rather than the quantised
+one.
 
 ## What is where
 

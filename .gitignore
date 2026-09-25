@@ -20,3 +20,7 @@ tools/ref/parity-out.txt
 
 # Beat grid cache, if it is ever pointed inside the tree
 *.beats
+
+# The vendored reference's bytecode, written by running it
+__pycache__/
+*.pyc

@@ -17,6 +17,20 @@ The library is consumed as packages rather than as a project, because it lives i
 published, the two packages are committed in `packages-local/` and `nuget.config` points at that folder, so a clean
 clone restores and builds without publishing anything first.
 
+**Updating the library means clearing NuGet's cache.** The feed is versioned `1.0.0`, so a machine that has already
+restored it keeps using the copy in `~/.nuget/packages` even after `packages-local/` has been repacked:
+
+```powershell
+dotnet pack D:\Linux\Proj\ParaTactus\ParaTactus\ParaTactus.csproj           -c Release -o packages-local
+dotnet pack D:\Linux\Proj\ParaTactus\ParaTactus.Bass\ParaTactus.Bass.csproj -c Release -o packages-local
+Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages\paratactus.net\1.0.0","$env:USERPROFILE\.nuget\packages\paratactus.bass\1.0.0"
+```
+
+The analysed grids under `%LOCALAPPDATA%\OsuTest\beatgrids` do not need deleting for that: their key includes the
+library's build identity, so a genuinely new assembly re-analyses by itself. If a track's BPM appears instantly after a
+rebuild, the old assembly is still being loaded - the cache is the symptom rather than the cause, and the check is
+whether `beatgrids` gained a file.
+
 ## The model
 
 A model is the one thing you have to fetch. Download `beat-this-final0-int8.onnx` (20.9 MB) from the releases of

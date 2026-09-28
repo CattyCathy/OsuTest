@@ -24,3 +24,45 @@ tools/ref/parity-out.txt
 # The vendored reference's bytecode, written by running it
 __pycache__/
 *.pyc
+
+# Everything the training and measurement experiments read and write. All of it is rebuilt by the
+# scripts in tools/, and together it is about eight gigabytes - the beatmap corpus, the mel cache, the
+# exported dataset, the trained models, the downloaded audio. None of it is repository content, and
+# the scripts say how to produce each one.
+#
+# The python environment is the largest single piece and the least worth keeping: it is one
+# requirements install away from existing.
+.venv-train/
+venv/
+*.osz
+*.wav
+
+beatmap-corpus/
+lazer-corpus/
+corpus-one-per-set/
+train-corpus/
+dataset/
+dataset-smoke/
+export-smoke/
+mel-cache/
+bench-audio/
+designant-audio/
+xnor-check/
+ref/
+
+# The trained detectors. A model is an output of tools/train_detector.py, and a checkout of this
+# repository that carried every training run would be several hundred megabytes of binary deltas.
+model/
+model-*/
+
+# What the measurement scripts print. None of it is tracked, and none of it needs to be: every one of
+# these is written by a script in tools/ from the corpus above, and the numbers that decisions rest on
+# are quoted in the comments of the code those decisions produced, where they are read.
+compare-*.txt
+corpus-*.txt
+sections-corpus*.txt
+engine-tests.txt
+merge-tests.txt
+curve-*.tsv
+mel-reference.bin
+
